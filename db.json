@@ -1,0 +1,50 @@
+{
+  "users": [
+    {
+      "id": "2",
+      "name": "Amr Abdelsattar",
+      "email": "amrmmohamed00@gmail.com"
+    },
+    {
+      "id": "5",
+      "name": "Omar Khaled",
+      "email": "omar.khaled@email.com"
+    },
+    {
+      "name": "Ahmed Hamada",
+      "email": "dev.ahmedhamada@gmail.com",
+      "id": "DhzssfH9Dq4"
+    },
+    {
+      "name": "Hossam Gamal",
+      "email": "hossam@gmail.com",
+      "id": "XtXV22AcmT0"
+    },
+    {
+      "name": "Khaled Ashraf",
+      "email": "khaledashraf@gmail.com",
+      "id": "3VO56JjlI3g"
+    },
+    {
+      "name": "Abdelrahman Montaser",
+      "email": "montaser@gmail.com",
+      "id": "4tT86VaY0AM"
+    },
+    {
+      "name": "Mostafa Medhat",
+      "email": "medhat@gmail.com",
+      "id": "hF-14fTPRu0"
+    },
+    {
+      "name": "Ahmed Zakrya",
+      "email": "ahmedzrks123@gmail.com",
+      "id": "E64IzlBU7AA"
+    },
+    {
+      "name": "Kareem Elgazery",
+      "email": "elgazery@gmail.com",
+      "id": "xa5pwFcxML4"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
