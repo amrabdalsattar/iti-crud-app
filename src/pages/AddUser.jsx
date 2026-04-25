@@ -1,10 +1,13 @@
 import { useState } from "react";
-import api from "../api/axios";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { addUser, clearError } from "../redux/slices/userSlice";
 
 function AddUser() {
     const [user, setUser] = useState({ name: "", email: "" });
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { loading, error } = useSelector((state) => state.users);
 
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -12,12 +15,25 @@ function AddUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await api.post("/users", user);
-        navigate("/");
+        const result = await dispatch(addUser(user));
+        if (result.payload) {
+            navigate("/");
+        }
+    };
+
+    const handleDismissError = () => {
+        dispatch(clearError());
     };
 
     return (
         <div className="page page-form">
+            {error && (
+                <div className="error-banner">
+                    <p>{error}</p>
+                    <button onClick={handleDismissError} className="btn-close">✕</button>
+                </div>
+            )}
+
             <div className="form-card">
                 <div className="form-header">
                     <div>
@@ -37,6 +53,7 @@ function AddUser() {
                             onChange={handleChange}
                             placeholder="Enter full name"
                             required
+                            disabled={loading}
                         />
                     </label>
 
@@ -49,17 +66,19 @@ function AddUser() {
                             onChange={handleChange}
                             placeholder="Enter email address"
                             required
+                            disabled={loading}
                         />
                     </label>
 
                     <div className="form-actions">
-                        <button className="btn btn-primary" type="submit">
-                            Save User
+                        <button className="btn btn-primary" type="submit" disabled={loading}>
+                            {loading ? "Saving..." : "Save User"}
                         </button>
                         <button
                             className="btn btn-secondary"
                             type="button"
                             onClick={() => navigate("/")}
+                            disabled={loading}
                         >
                             Cancel
                         </button>

@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchUsers, deleteUser, clearError } from "../redux/slices/userSlice";
 
 function Home() {
-    const [users, setUsers] = useState([]);
+    const dispatch = useDispatch();
+    const { users, loading, error } = useSelector((state) => state.users);
     const [search, setSearch] = useState("");
 
-    const getUsers = async () => {
-        const res = await api.get("/users");
-        setUsers(res.data);
-    };
-
-    const deleteUser = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this user?")) return;
-        await api.delete(`/users/${id}`);
-        getUsers();
-    };
-
     useEffect(() => {
-        getUsers();
-    }, []);
+        dispatch(fetchUsers());
+    }, [dispatch]);
+
+    const handleDeleteUser = (id) => {
+        if (!window.confirm("Are you sure you want to delete this user?")) return;
+        dispatch(deleteUser(id));
+    };
+
+    const handleDismissError = () => {
+        dispatch(clearError());
+    };
 
     const filteredUsers = users.filter((user) =>
         user.name.toLowerCase().includes(search.toLowerCase())
@@ -27,6 +27,13 @@ function Home() {
 
     return (
         <div className="page page-home">
+            {error && (
+                <div className="error-banner">
+                    <p>{error}</p>
+                    <button onClick={handleDismissError} className="btn-close">✕</button>
+                </div>
+            )}
+
             <div className="page-header">
                 <div>
                     <h2>All Users</h2>
@@ -39,6 +46,13 @@ function Home() {
                 </Link>
             </div>
 
+            {loading && users.length === 0 && (
+                <div className="loading-state">
+                    <div className="spinner"></div>
+                    <p>Loading users...</p>
+                </div>
+            )}
+
             <div className="list-toolbar">
                 <div className="search-box">
                     <input
@@ -46,6 +60,7 @@ function Home() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search users by name"
+                        disabled={loading && users.length > 0}
                     />
                 </div>
                 <div className="user-count">
@@ -53,7 +68,15 @@ function Home() {
                 </div>
             </div>
 
-            {filteredUsers.length === 0 ? (
+            {users.length === 0 && !loading ? (
+                <div className="empty-state">
+                    <h3>No users found</h3>
+                    <p>Try a different search term or add a new user.</p>
+                    <Link className="btn btn-secondary" to="/add">
+                        Add your first user
+                    </Link>
+                </div>
+            ) : filteredUsers.length === 0 ? (
                 <div className="empty-state">
                     <h3>No users found</h3>
                     <p>Try a different search term or add a new user.</p>
@@ -80,8 +103,12 @@ function Home() {
                                 <Link className="btn btn-outline" to={`/edit/${user.id}`}>
                                     Edit
                                 </Link>
-                                <button className="btn btn-danger" onClick={() => deleteUser(user.id)}>
-                                    Delete
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => handleDeleteUser(user.id)}
+                                    disabled={loading}
+                                >
+                                    {loading ? "Deleting..." : "Delete"}
                                 </button>
                             </div>
                         </article>
